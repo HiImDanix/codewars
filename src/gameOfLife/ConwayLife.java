@@ -11,10 +11,10 @@ import java.util.TreeMap;
  */
 public class ConwayLife {
 	
-	private static final int DEAD_TO_DEAD = 0;
 	private static final int DEAD_TO_ALIVE = 3;
 	private static final int ALIVE_TO_ALIVE = 4;
 	private static final int ALIVE_TO_DEAD = 5;
+	// DEAD_TO_DEAD stays 0 (which we do not store in our sparse matrix)
 	
 	private static SortedMap<Integer, SortedMap<Integer, Integer>> board;
 	// x -> y -> value
