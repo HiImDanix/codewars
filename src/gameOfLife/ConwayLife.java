@@ -138,8 +138,6 @@ public class ConwayLife {
 		if (board.isEmpty()) {
 			return new int[0][0];
 		}
-//		// Normalize board (convert the various states to DEAD or ALIVE)
-//		normalizeBoard();
 		
 		// Get a cropped board's bounds & size
 		int highestX = getHighestX();
