@@ -2,6 +2,10 @@ package snailSort;
 
 public class Snail {
 	
+	public static int[] snail(int[][] array) {
+		return new Snail().solve(array);
+	}
+	
 	private enum Move {
 		UP,
 		DOWN,
@@ -9,111 +13,84 @@ public class Snail {
 		RIGHT,
 		FINISHED
 	}
+	
+	int n, xRightBound, yBotBound, xLeftBound, yUpBound, currX, currY;
+	int[] newArray;
+	Move lastMove, nextMove;
 
-	public static int[] snail(int[][] array) {
-		int n = array[0].length;
-		
-		int xRightBound = n-1; // The current bound for positive X (right direction)
-		int yBotBound = n-1; // the current bound for positive Y (down direction)
-		int xLeftBound = 0;
-		int yUpBound = 0;
-		
-		int[] newArray = new int[n*n];
-		int currX = 0;
-		int currY = 0;
-		// Because we are already at 0, 0
+	
+	private int[] solve(int[][] array) {
+		n = array[0].length;
+		xRightBound = n-1; // The current bound for positive X (right direction)
+		yBotBound = n-1; // the current bound for positive Y (down direction)
+		xLeftBound = 0;
+		yUpBound = 0;
+		newArray = new int[n*n];
+		currX = 0;
+		currY = 0;
+		// Because we are starting at 0, 0
 		if (n > 0) { 
 			newArray[0] = array[0][0];
 		}
-		
-		Move lastMove = null;
-		Move nextMove = null;
+		lastMove = null;
+		nextMove = null;
 		int i = 1;
-		while ((nextMove = nextMove(currX, currY, xRightBound, yBotBound, xLeftBound, yUpBound, lastMove)) != Move.FINISHED) {
+		while ((nextMove = nextMove()) != Move.FINISHED) {
 			
-			if (nextMove.equals(Move.RIGHT)) {
+			if (nextMove == Move.RIGHT) {
 				currX++;
-				if (lastMove == Move.UP) {
-					xLeftBound++;
-				}
-			} else if (nextMove.equals(Move.DOWN)) {
+				if (lastMove == Move.UP) xLeftBound++;
+			} else if (nextMove == Move.DOWN) {
 				currY++;
-				if (lastMove == Move.RIGHT) {
-					yUpBound++;
-				}
-			} else if (nextMove.equals(Move.LEFT)) {
+				if (lastMove == Move.RIGHT) yUpBound++;
+			} else if (nextMove == Move.LEFT) {
 				currX--;
-				if (lastMove == Move.DOWN) {
-					xRightBound--;
-				}
-			} else if (nextMove.equals(Move.UP)) {
+				if (lastMove == Move.DOWN) xRightBound--;
+
+			} else if (nextMove == Move.UP) {
 				currY--;
-				if (lastMove == Move.LEFT) {
-					yBotBound--;
-				}
+				if (lastMove == Move.LEFT) yBotBound--;
 			}
 			
 			newArray[i++] = array[currY][currX];
 			lastMove = nextMove;
 		}
 		return newArray;
-	} 
+	}
 	
-	private static boolean canMoveRight(int currX, int xRightBound) {
-		return (currX+1 <= xRightBound);
+	private boolean canMove(Move direction) {
+		switch (direction) {
+		case RIGHT: return (currX+1 <= xRightBound);
+		case DOWN: return (currY+1 <= yBotBound);
+		case LEFT:return (currX-1 >= xLeftBound);
+		case UP: return (currY-1 >= yUpBound);
+		default: return false;
+		}
 	}
-	private static boolean canMoveDown(int currY, int yBotBound) {
-		return (currY+1 <= yBotBound);
-	}
-	private static boolean canMoveLeft(int currX, int xLeftBound) {
-		return (currX-1 >= xLeftBound);
-	}
-	private static boolean canMoveUp(int currY, int yUpBound) {
-		return (currY-1 >= yUpBound);
+	
+	private Move nextDirection(Move direction) {
+		switch (direction) {
+		case RIGHT: return Move.DOWN;
+		case DOWN: return Move.LEFT;
+		case LEFT:return Move.UP;
+		case UP: return Move.RIGHT;
+		default: return null;
+		}
 	}
     
-	private static Move nextMove(int currX, int currY, int xRightBound, int yBotBound, int xLeftBound,
-			int yUpBound, Move lastMove) {
-		
+	private Move nextMove() {
 		// if array size is 0, there is no next move
-		if (xRightBound == 0 && yBotBound == 0) {
-			return Move.FINISHED;
-		}
+		if (xRightBound == 0 && yBotBound == 0) return Move.FINISHED;
 
 		// If there was no last move, go right.
-		if (lastMove == null) {
-			if (canMoveRight(currX, xRightBound)) {
-				return Move.RIGHT;
-			} else {
-				return Move.FINISHED;
-			}
+		if (lastMove == null) 
+			return canMove(Move.RIGHT) ? Move.RIGHT : Move.FINISHED;
 
-		}
 		// The snail logic
-		if (lastMove.equals(Move.RIGHT)) {
-			if (canMoveRight(currX, xRightBound)) {
-				return Move.RIGHT;
-			} else if (canMoveDown(currY, yBotBound)) {
-				return Move.DOWN;
-			}
-		} else if (lastMove.equals(Move.DOWN)) {
-			if (canMoveDown(currY, yBotBound)) {
-				return Move.DOWN;
-			} else if (canMoveLeft(currX, xLeftBound)) {
-				return Move.LEFT;
-			}
-		}  else if (lastMove.equals(Move.LEFT)) {
-			if (canMoveLeft(currX, xLeftBound)) {
-				return Move.LEFT;
-			} else if (canMoveUp(currY, yUpBound)) {
-				return Move.UP;
-			}
-		}  else if (lastMove.equals(Move.UP)) {
-			if (canMoveUp(currY, yUpBound)) {
-				return Move.UP;
-			} else if (canMoveRight(currX, xRightBound)) {
-				return Move.RIGHT;
-			}
+		if (canMove(lastMove)) {
+			return lastMove;
+		} else if (canMove(nextDirection(lastMove))) {
+			return nextDirection(lastMove);
 		}
 		return Move.FINISHED;
 	}

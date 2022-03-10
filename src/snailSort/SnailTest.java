@@ -27,10 +27,10 @@ public class SnailTest {
     }
 
     public void test(int[][] array, int[] result) {
-        System.out.println(Snail.snail(array));
         String text = int2dToString(array) + " should be sorted to " + Arrays.toString(result);
         System.out.println(text);
-        Assert.assertArrayEquals( result, Snail.snail(array));
+        System.out.println(Arrays.toString(Snail.snail(array)));
+        Assert.assertArrayEquals(result, Snail.snail(array));
     }
 
    
