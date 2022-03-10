@@ -2,7 +2,6 @@ package snailSort;
 
 public class Snail {
 	
-	
 	private enum Move {
 		UP,
 		DOWN,
@@ -53,36 +52,29 @@ public class Snail {
 					yBotBound--;
 				}
 			}
-			System.out.println("x right bound: " + (xRightBound));
-			System.out.println("currx: " + currX + " curry: " + currY + " move: " + nextMove + " value: " + array[currY][currX]);
 			
 			newArray[i++] = array[currY][currX];
 			lastMove = nextMove;
 		}
-		
 		return newArray;
-		
-		
 	} 
 	
 	private static boolean canMoveRight(int currX, int xRightBound) {
 		return (currX+1 <= xRightBound);
 	}
-	
 	private static boolean canMoveDown(int currY, int yBotBound) {
 		return (currY+1 <= yBotBound);
 	}
-	
 	private static boolean canMoveLeft(int currX, int xLeftBound) {
 		return (currX-1 >= xLeftBound);
 	}
-	
 	private static boolean canMoveUp(int currY, int yUpBound) {
 		return (currY-1 >= yUpBound);
 	}
     
 	private static Move nextMove(int currX, int currY, int xRightBound, int yBotBound, int xLeftBound,
 			int yUpBound, Move lastMove) {
+		
 		// if array size is 0, there is no next move
 		if (xRightBound == 0 && yBotBound == 0) {
 			return Move.FINISHED;
